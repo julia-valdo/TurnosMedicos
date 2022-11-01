@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<TurnosMedicos.Models.Turno>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Turnos Por Medico";
 }
 
-<h1>Index</h1>
+<h1>TurnosPorMedicos</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -16,8 +16,12 @@
                 @Html.DisplayNameFor(model => model.Fecha)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Usuario)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Medico)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -25,6 +29,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuario.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Medico.Nombre)

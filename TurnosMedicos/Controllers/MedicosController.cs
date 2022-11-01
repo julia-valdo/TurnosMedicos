@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TurnosMedicos.Models;
+using TurnosMedicos.Reglas;
 
 namespace TurnosMedicos.Controllers
 {
@@ -57,7 +58,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Matricula,Nombre,Apellido,EspecialidadId")] Medico medico)
+        public async Task<IActionResult> Create([Bind("Id,Matricula,Nombre,EspecialidadId")] Medico medico)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +91,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Matricula,Nombre,Apellido,EspecialidadId")] Medico medico)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Matricula,Nombre,EspecialidadId")] Medico medico)
         {
             if (id != medico.MedicoId)
             {
@@ -161,6 +162,23 @@ namespace TurnosMedicos.Controllers
         private bool MedicoExists(int id)
         {
             return _context.Medico.Any(e => e.MedicoId == id);
+        }
+
+        // GET: Trabajadores
+        public async Task<IActionResult> GenerarTurno(int id)
+        {
+            var regla = new ReglaTurnos(_context);
+            DateTime fechaInicio = DateTime.Now;
+            fechaInicio = fechaInicio.AddHours(-fechaInicio.Hour).AddHours(9);
+            fechaInicio = fechaInicio.AddMinutes(-fechaInicio.Minute);
+            await regla.GenerarTurnos(new ModelsView.GeneradorTurno()
+            {
+                CantidadTurnos = 18,
+                FechaDesde = fechaInicio,
+                FechaHasta = fechaInicio,
+                MedicoId = id
+            });
+            return RedirectToAction(nameof(Index));
         }
     }
 }

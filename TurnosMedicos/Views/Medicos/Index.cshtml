@@ -19,9 +19,6 @@
                 @Html.DisplayNameFor(model => model.Nombre)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Apellido)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Especialidad)
             </th>
             <th></th>
@@ -37,15 +34,13 @@
                 @Html.DisplayFor(modelItem => item.Nombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Apellido)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Especialidad.Nombre)
             </td>
             <td>
+                <a asp-action="GenerarTurno" asp-route-id="@item.MedicoId">Generar Turnos</a> |
                 <a asp-action="Edit" asp-route-id="@item.MedicoId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.MedicoId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.MedicoId">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.MedicoId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MedicoId">Delete</a>
             </td>
         </tr>
 }

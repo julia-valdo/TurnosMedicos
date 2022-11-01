@@ -16,10 +16,6 @@ namespace TurnosMedicos.Models
         [MaxLength(50, ErrorMessage = ErrorViewModel.CaracteresMaximos)]
         public string Nombre { get; set; } = "";
 
-        [Required(ErrorMessage = ErrorViewModel.CampoRequerido)]
-        [MaxLength(50, ErrorMessage = ErrorViewModel.CaracteresMaximos)]
-        public string Apellido { get; set; } = "";
-
         public int EspecialidadId { get; set; }
         public Especialidad? Especialidad { get; set; }
 

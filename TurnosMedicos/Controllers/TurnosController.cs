@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TurnosMedicos.Models;
+using TurnosMedicos.ModelsView;
+using TurnosMedicos.Reglas;
 
 namespace TurnosMedicos.Controllers
 {
@@ -24,7 +26,7 @@ namespace TurnosMedicos.Controllers
         [Authorize(Roles = "Administrador, Supervisor, Paciente")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Turno.ToListAsync());
+            return View(await _context.Turno.Include(m => m.Medico).ToListAsync());
         }
 
         // GET: Turnos/Details/5
@@ -56,7 +58,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Fecha,Hora")] Turno turno)
+        public async Task<IActionResult> Create([Bind("Id,Fecha")] Turno turno)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +90,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Fecha,Hora")] Turno turno)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Fecha")] Turno turno)
         {
             if (id != turno.TurnoId)
             {
@@ -158,6 +160,28 @@ namespace TurnosMedicos.Controllers
         private bool TurnoExists(int id)
         {
             return _context.Turno.Any(e => e.TurnoId == id);
+        }
+
+        // GET: JornadasLaborales/Generacion
+        public IActionResult Generacion()
+        {
+            ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
+            return View();
+        }
+
+        [HttpPost, ActionName("Generacion")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Generacion(GeneradorTurno generador)
+        {
+            var regla = new ReglaTurnos(_context);
+            await regla.GenerarTurnos(generador);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> ListarTurnos(int id)
+        {
+            var turnos = _context.Turno.Where(m => m.MedicoId == id).ToList();
+            return View(turnos);
         }
     }
 }
