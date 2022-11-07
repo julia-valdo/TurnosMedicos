@@ -9,6 +9,7 @@ namespace TurnosMedicos.Models
         [Key]
         public int TurnoId { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:g}", ApplyFormatInEditMode = true)]
         public DateTime Fecha { get; set; }
 
         public int? UsuarioId { get; set; }

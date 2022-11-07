@@ -56,7 +56,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre")] Especialidad especialidad)
+        public async Task<IActionResult> Create([Bind("EspecialidadId,Nombre")] Especialidad especialidad)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre")] Especialidad especialidad)
+        public async Task<IActionResult> Edit(int id, [Bind("EspecialidadId,Nombre")] Especialidad especialidad)
         {
             if (id != especialidad.EspecialidadId)
             {

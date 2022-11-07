@@ -58,7 +58,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Matricula,Nombre,EspecialidadId")] Medico medico)
+        public async Task<IActionResult> Create([Bind("MedicoId,Matricula,Nombre,EspecialidadId")] Medico medico)
         {
             if (ModelState.IsValid)
             {
@@ -78,6 +78,7 @@ namespace TurnosMedicos.Controllers
                 return NotFound();
             }
 
+            ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
             var medico = await _context.Medico.FindAsync(id);
             if (medico == null)
             {
@@ -91,7 +92,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Matricula,Nombre,EspecialidadId")] Medico medico)
+        public async Task<IActionResult> Edit(int id, [Bind("MedicoId,Matricula,Nombre,EspecialidadId")] Medico medico)
         {
             if (id != medico.MedicoId)
             {
@@ -171,6 +172,7 @@ namespace TurnosMedicos.Controllers
             DateTime fechaInicio = DateTime.Now;
             fechaInicio = fechaInicio.AddHours(-fechaInicio.Hour).AddHours(9);
             fechaInicio = fechaInicio.AddMinutes(-fechaInicio.Minute);
+            fechaInicio = fechaInicio.AddSeconds(-fechaInicio.Second);
             await regla.GenerarTurnos(new ModelsView.GeneradorTurno()
             {
                 CantidadTurnos = 18,

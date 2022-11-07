@@ -6,9 +6,11 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="form-group">
+    <label class="control-label"></label>
+    <select class="form-control" asp-items="ViewBag.MedicoId"></select>
+    <a asp-action="Index" class="btn btn-primary">Buscar</a>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -29,10 +31,16 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Medico.Nombre)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.TurnoId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.TurnoId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.TurnoId">Delete</a>
+                @if (User.IsInRole("Administrador")){
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.TurnoId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.TurnoId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.TurnoId">Delete</a>
+                    </td>
+                }
+            <td>                
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
             </td>
         </tr>
 }

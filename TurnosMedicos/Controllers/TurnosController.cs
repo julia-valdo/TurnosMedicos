@@ -26,6 +26,7 @@ namespace TurnosMedicos.Controllers
         [Authorize(Roles = "Administrador, Supervisor, Paciente")]
         public async Task<IActionResult> Index()
         {
+            ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
             return View(await _context.Turno.Include(m => m.Medico).ToListAsync());
         }
 
@@ -58,7 +59,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Fecha")] Turno turno)
+        public async Task<IActionResult> Create([Bind("TurnoId,Fecha")] Turno turno)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +91,7 @@ namespace TurnosMedicos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Fecha")] Turno turno)
+        public async Task<IActionResult> Edit(int id, [Bind("TurnoId,Fecha")] Turno turno)
         {
             if (id != turno.TurnoId)
             {
@@ -180,8 +181,8 @@ namespace TurnosMedicos.Controllers
 
         public async Task<IActionResult> ListarTurnos(int id)
         {
-            var turnos = _context.Turno.Where(m => m.MedicoId == id).ToList();
-            return View(turnos);
+            var medicos = await _context.Turno.Include(m => m.MedicoId == id).ToListAsync();
+            return View("Index", medicos);
         }
     }
 }
