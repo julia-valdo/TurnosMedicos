@@ -3,12 +3,19 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using TurnosMedicos.Models;
-using TurnosMedicos.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace TurnosMedicos.Controllers
 {
     public class LoginController : Controller
     {
+        private readonly TurnosContext _context;
+
+        public LoginController(TurnosContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
             return View();
@@ -17,22 +24,23 @@ namespace TurnosMedicos.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(Usuario _usuario)
         {
-            LoginUsuario _loginUsuario = new LoginUsuario();
-
-            var usuario = _loginUsuario.ValidarUsuario(_usuario.Email, _usuario.Password);
+            var usuario = _context.Usuario.FirstOrDefault(u => u.Email == _usuario.Email && u.Password == _usuario.Password);
 
             if (usuario != null)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, usuario.Nombre),
-                    new Claim("Email", usuario.Email),
-                    new Claim(ClaimTypes.Role, usuario.Rol)
-                };
+                ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+                identity.AddClaim(new Claim(ClaimTypes.Name, usuario.Nombre));
+                identity.AddClaim(new Claim(ClaimTypes.Email, usuario.Email));
+                if(usuario.Email == "administrador@gmail.com")
+                    identity.AddClaim(new Claim(ClaimTypes.Role, "Administrador"));
+                else
+                    identity.AddClaim(new Claim(ClaimTypes.Role, "Paciente"));
+                identity.AddClaim(new Claim("Password", usuario.Password));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.UsuarioId.ToString()));
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
                 return RedirectToAction("Index", "Home");
             }
             else return View();
@@ -42,6 +50,25 @@ namespace TurnosMedicos.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Login");
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("UsuarioId,Nombre,Email,Password")] Usuario usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                usuario.Rol = "Paciente";
+                _context.Add(usuario);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(usuario);
         }
     }
 }

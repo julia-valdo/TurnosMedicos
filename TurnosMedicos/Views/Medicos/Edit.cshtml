@@ -1,12 +1,11 @@
 ﻿@model TurnosMedicos.Models.Medico
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Medico";
 }
 
-<h1>Edit</h1>
+<h1>Editar Medico</h1>
 
-<h4>Medico</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -27,16 +26,17 @@
                 <label asp-for="EspecialidadId" class="control-label"></label>
                 <select asp-for="EspecialidadId" class="form-control" asp-items="ViewBag.EspecialidadId"></select>
                 <span asp-validation-for="EspecialidadId" class="text-danger"></span>
-            </div>
+            </div><br />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+<br />
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver</a>
 </div>
 
 @section Scripts {

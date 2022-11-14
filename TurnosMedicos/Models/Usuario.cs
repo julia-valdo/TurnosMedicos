@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Claims;
 
 namespace TurnosMedicos.Models
 {
@@ -9,15 +10,15 @@ namespace TurnosMedicos.Models
         [Key]
         public int UsuarioId { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        [Required(ErrorMessage = ErrorViewModel.CampoRequerido)]
+        [MaxLength(50, ErrorMessage = ErrorViewModel.CaracteresMaximos)]
         public string Nombre { get; set; } = "";
 
-        [Required]
+        [Required(ErrorMessage = ErrorViewModel.CampoRequerido)]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; } = "";
 
-        [Required]
+        [Required(ErrorMessage = ErrorViewModel.CampoRequerido)]
         [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 

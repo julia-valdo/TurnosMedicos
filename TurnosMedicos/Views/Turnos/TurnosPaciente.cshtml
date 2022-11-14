@@ -1,0 +1,31 @@
+﻿@model IEnumerable<TurnosMedicos.Models.Turno>
+
+@{
+    ViewData["Title"] = "Mis Turnos";
+}
+
+   <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Medico)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Medico.Nombre)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

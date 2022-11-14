@@ -1,13 +1,12 @@
 ﻿@model IEnumerable<TurnosMedicos.Models.Medico>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Inicio Medico";
 }
 
-<h1>Index</h1>
-
+<h1>Medicos</h1>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-outline-dark">Agregar Medico</a>
 </p>
 <table class="table">
     <thead>
@@ -38,9 +37,9 @@
             </td>
             <td>
                 <a asp-action="GenerarTurno" asp-route-id="@item.MedicoId">Generar Turnos</a> |
-                <a asp-action="Edit" asp-route-id="@item.MedicoId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MedicoId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MedicoId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.MedicoId">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.MedicoId">Detalle</a> |
+                <a asp-action="Delete" asp-route-id="@item.MedicoId">Eliminar</a>
             </td>
         </tr>
 }

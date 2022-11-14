@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,22 +16,20 @@ namespace TurnosMedicos.Controllers
     [Authorize]
     public class TurnosController : Controller
     {
-        private readonly DbContext _context;
+        private readonly TurnosContext _context;
 
-        public TurnosController(DbContext context)
+        public TurnosController(TurnosContext context)
         {
             _context = context;
         }
 
-        // GET: Turnos
-        [Authorize(Roles = "Administrador, Supervisor, Paciente")]
+        [Authorize(Roles = "Administrador, Paciente")]
         public async Task<IActionResult> Index()
         {
-            ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
+            ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
             return View(await _context.Turno.Include(m => m.Medico).ToListAsync());
         }
 
-        // GET: Turnos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Turno == null)
@@ -38,8 +37,7 @@ namespace TurnosMedicos.Controllers
                 return NotFound();
             }
 
-            var turno = await _context.Turno
-                .FirstOrDefaultAsync(m => m.TurnoId == id);
+            var turno = await _context.Turno.Include(m => m.Medico).Include(m => m.Usuario).FirstOrDefaultAsync(m => m.TurnoId == id);
             if (turno == null)
             {
                 return NotFound();
@@ -48,18 +46,15 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
-        // GET: Turnos/Create
         public IActionResult Create()
         {
+            ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
             return View();
         }
 
-        // POST: Turnos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TurnoId,Fecha")] Turno turno)
+        public async Task<IActionResult> Create([Bind("TurnoId,Fecha,MedicoId")] Turno turno)
         {
             if (ModelState.IsValid)
             {
@@ -70,9 +65,9 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
-        // GET: Turnos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
             if (id == null || _context.Turno == null)
             {
                 return NotFound();
@@ -86,12 +81,9 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
-        // POST: Turnos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TurnoId,Fecha")] Turno turno)
+        public async Task<IActionResult> Edit(int id, [Bind("TurnoId,Fecha,Usuario")] Turno turno)
         {
             if (id != turno.TurnoId)
             {
@@ -121,7 +113,6 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
-        // GET: Turnos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Turno == null)
@@ -129,8 +120,7 @@ namespace TurnosMedicos.Controllers
                 return NotFound();
             }
 
-            var turno = await _context.Turno
-                .FirstOrDefaultAsync(m => m.TurnoId == id);
+            var turno = await _context.Turno.FirstOrDefaultAsync(m => m.TurnoId == id);
             if (turno == null)
             {
                 return NotFound();
@@ -139,7 +129,6 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
-        // POST: Turnos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -163,7 +152,6 @@ namespace TurnosMedicos.Controllers
             return _context.Turno.Any(e => e.TurnoId == id);
         }
 
-        // GET: JornadasLaborales/Generacion
         public IActionResult Generacion()
         {
             ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
@@ -179,10 +167,79 @@ namespace TurnosMedicos.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> ListarTurnos(int id)
+        [HttpPost, ActionName("Index")]
+        public async Task<IActionResult> ListarTurnos(string especialidades)
         {
-            var medicos = await _context.Turno.Include(m => m.MedicoId == id).ToListAsync();
-            return View("Index", medicos);
+            var turnos = await _context.Turno.Include(m => m.Medico).ToListAsync();
+            ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
+
+            if (!String.IsNullOrEmpty(especialidades))
+            {
+                turnos = turnos.Where(e => e.Medico.EspecialidadId == Int32.Parse(especialidades)).ToList();
+            }
+
+            return View("Index", turnos);
+        }
+
+        public async Task<IActionResult> Reservar(int? id)
+        {
+            if (id == null || _context.Turno == null)
+            {
+                return NotFound();
+            }
+
+            var turno = await _context.Turno.Include(m => m.Medico).FirstOrDefaultAsync(m => m.TurnoId == id);
+            if (turno == null)
+            {
+                return NotFound();
+            }
+            return View(turno);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Reservar(int id)
+        {            
+            int usuarioId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.UsuarioId == usuarioId);
+            var turno = await _context.Turno.FindAsync(id);
+
+            if (id != turno.TurnoId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    turno.Usuario = usuario;
+                    _context.Update(turno);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TurnoExists(turno.TurnoId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(turno);                
+        }
+
+        public async Task<IActionResult> TurnosPaciente()
+        {            
+            int usuarioId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var turnos = await _context.Turno.Include(m => m.Medico).ToListAsync();
+            turnos = turnos.Where(t => t.UsuarioId == usuarioId).ToList();
+
+            ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
+            return View(turnos);
         }
     }
 }

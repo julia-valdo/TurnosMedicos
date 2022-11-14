@@ -14,21 +14,19 @@ namespace TurnosMedicos.Controllers
     [Authorize]
     public class MedicosController : Controller
     {
-        private readonly DbContext _context;
+        private readonly TurnosContext _context;
 
-        public MedicosController(DbContext context)
+        public MedicosController(TurnosContext context)
         {
             _context = context;
         }
 
-        // GET: Medicos
-        [Authorize(Roles = "Administrador, Supervisor")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Medico.Include(m => m.Especialidad).ToListAsync());
         }
 
-        // GET: Medicos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Medico == null)
@@ -36,8 +34,7 @@ namespace TurnosMedicos.Controllers
                 return NotFound();
             }
 
-            var medico = await _context.Medico.Include(m => m.Especialidad)
-                .FirstOrDefaultAsync(m => m.MedicoId == id);
+            var medico = await _context.Medico.Include(m => m.Especialidad).FirstOrDefaultAsync(m => m.MedicoId == id);
             if (medico == null)
             {
                 return NotFound();
@@ -46,16 +43,12 @@ namespace TurnosMedicos.Controllers
             return View(medico);
         }
 
-        // GET: Medicos/Create
         public IActionResult Create()
         {
             ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
             return View();
         }
 
-        // POST: Medicos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MedicoId,Matricula,Nombre,EspecialidadId")] Medico medico)
@@ -70,7 +63,6 @@ namespace TurnosMedicos.Controllers
             return View(medico);
         }
 
-        // GET: Medicos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Medico == null)
@@ -87,9 +79,6 @@ namespace TurnosMedicos.Controllers
             return View(medico);
         }
 
-        // POST: Medicos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MedicoId,Matricula,Nombre,EspecialidadId")] Medico medico)
@@ -123,7 +112,6 @@ namespace TurnosMedicos.Controllers
             return View(medico);
         }
 
-        // GET: Medicos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Medico == null)
@@ -141,7 +129,6 @@ namespace TurnosMedicos.Controllers
             return View(medico);
         }
 
-        // POST: Medicos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -165,7 +152,6 @@ namespace TurnosMedicos.Controllers
             return _context.Medico.Any(e => e.MedicoId == id);
         }
 
-        // GET: Trabajadores
         public async Task<IActionResult> GenerarTurno(int id)
         {
             var regla = new ReglaTurnos(_context);

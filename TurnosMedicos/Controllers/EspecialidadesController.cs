@@ -13,21 +13,19 @@ namespace TurnosMedicos.Controllers
     [Authorize]
     public class EspecialidadesController : Controller
     {
-        private readonly DbContext _context;
+        private readonly TurnosContext _context;
 
-        public EspecialidadesController(DbContext context)
+        public EspecialidadesController(TurnosContext context)
         {
             _context = context;
         }
 
-        // GET: Especialidades
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Especialidad.ToListAsync());
         }
 
-        // GET: Especialidades/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Especialidad == null)
@@ -45,15 +43,11 @@ namespace TurnosMedicos.Controllers
             return View(especialidad);
         }
 
-        // GET: Especialidades/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Especialidades/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EspecialidadId,Nombre")] Especialidad especialidad)
@@ -67,7 +61,6 @@ namespace TurnosMedicos.Controllers
             return View(especialidad);
         }
 
-        // GET: Especialidades/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Especialidad == null)
@@ -83,9 +76,6 @@ namespace TurnosMedicos.Controllers
             return View(especialidad);
         }
 
-        // POST: Especialidades/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EspecialidadId,Nombre")] Especialidad especialidad)
@@ -118,7 +108,6 @@ namespace TurnosMedicos.Controllers
             return View(especialidad);
         }
 
-        // GET: Especialidades/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Especialidad == null)
@@ -136,7 +125,6 @@ namespace TurnosMedicos.Controllers
             return View(especialidad);
         }
 
-        // POST: Especialidades/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

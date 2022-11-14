@@ -5,9 +5,9 @@ namespace TurnosMedicos.Reglas
 {
     public class ReglaTurnos
     {
-        private readonly DbContext _context;
+        private readonly TurnosContext _context;
 
-        public ReglaTurnos(DbContext context)
+        public ReglaTurnos(TurnosContext context)
         {
             _context = context;
         }

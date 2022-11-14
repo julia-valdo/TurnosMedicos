@@ -1,16 +1,25 @@
 ﻿@model IEnumerable<TurnosMedicos.Models.Turno>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Inicio Turnos";
 }
 
-<h1>Index</h1>
+<h1>Inicio Turnos</h1>
 
 <div class="form-group">
-    <label class="control-label"></label>
-    <select class="form-control" asp-items="ViewBag.MedicoId"></select>
-    <a asp-action="Index" class="btn btn-primary">Buscar</a>
-</div>
+    <label class="control-label">Filtrar por:</label>          
+    @using (Html.BeginForm("Index", "Turnos", FormMethod.Post))
+    {
+        @Html.DropDownList("especialidades", ViewBag.EspecialidadId as IEnumerable<SelectListItem>, new { @class = "form-control" })
+        <input type="submit" class="btn btn-primary" value="Buscar" />
+    }
+</div><br/>
+@if (User.IsInRole("Administrador")) 
+{
+    <div>
+        <a asp-action="Create" class="btn btn-outline-dark">Agregar Turno</a>
+    </div>
+}
 <table class="table">
     <thead>
         <tr>
@@ -20,6 +29,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Medico)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -31,18 +41,26 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Medico.Nombre)
             </td>
-                @if (User.IsInRole("Administrador")){
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.TurnoId">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.TurnoId">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.TurnoId">Delete</a>
-                    </td>
-                }
-            <td>                
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
-            </td>
+            @if (User.IsInRole("Administrador")){
+                <td>                    
+                    <a asp-action="Edit" asp-route-id="@item.TurnoId">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.TurnoId">Detalle</a> |
+                    <a asp-action="Delete" asp-route-id="@item.TurnoId">Eliminar</a>                                            
+                </td>
+            }
+            @if (User.IsInRole("Paciente")){
+                <td>
+                    @if (item.UsuarioId == null)
+                    {
+                        <a class="btn btn-primary" asp-action="Reservar" asp-route-id="@item.TurnoId">Reservar</a>
+                    }else{
+                        <button type="button" class="btn btn-secondary" disabled>Reservar</button>
+                    }
+
+                </td>
+            }            
         </tr>
 }
     </tbody>
 </table>
+

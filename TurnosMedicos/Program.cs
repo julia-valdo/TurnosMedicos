@@ -4,10 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<DbContext>(options =>
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DbContext") ?? throw new InvalidOperationException("Connection string 'DbContext' not found."))
-    options.UseInMemoryDatabase("DbMemoria"));
-
+builder.Services.AddDbContext<TurnosContext>(options =>
+    options.UseSqlite(@"filename=C:\Users\valdo\Documents\ORT\TurnosMedicos.db"));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -19,8 +17,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         option.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         option.AccessDeniedPath = "/Home/Privacy";
     });
+builder.Services.AddSession();
 
 var app = builder.Build();
+
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

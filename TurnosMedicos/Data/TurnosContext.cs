@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TurnosMedicos.Models;
 
-    public class DbContext : Microsoft.EntityFrameworkCore.DbContext
-    {
-        public DbContext (DbContextOptions<DbContext> options)
+    public class TurnosContext : Microsoft.EntityFrameworkCore.DbContext
+{
+        public TurnosContext(DbContextOptions<TurnosContext> options)
             : base(options)
         {
         }
@@ -17,4 +17,6 @@ using TurnosMedicos.Models;
         public DbSet<TurnosMedicos.Models.Medico> Medico { get; set; }
 
         public DbSet<TurnosMedicos.Models.Turno> Turno { get; set; }
-    }
+
+        public DbSet<TurnosMedicos.Models.Usuario> Usuario { get; set; }
+}
