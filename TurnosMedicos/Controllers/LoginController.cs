@@ -31,10 +31,7 @@ namespace TurnosMedicos.Controllers
                 ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
                 identity.AddClaim(new Claim(ClaimTypes.Name, usuario.Nombre));
                 identity.AddClaim(new Claim(ClaimTypes.Email, usuario.Email));
-                if(usuario.Email == "administrador@gmail.com")
-                    identity.AddClaim(new Claim(ClaimTypes.Role, "Administrador"));
-                else
-                    identity.AddClaim(new Claim(ClaimTypes.Role, "Paciente"));
+                identity.AddClaim(new Claim(ClaimTypes.Role, usuario.Rol));
                 identity.AddClaim(new Claim("Password", usuario.Password));
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.UsuarioId.ToString()));
 
