@@ -168,14 +168,14 @@ namespace TurnosMedicos.Controllers
         }
 
         [HttpPost, ActionName("Index")]
-        public async Task<IActionResult> ListarTurnos(string especialidades)
+        public async Task<IActionResult> ListarTurnos(int especialidades)
         {
             var turnos = await _context.Turno.Include(m => m.Medico).ToListAsync();
             ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
 
-            if (!String.IsNullOrEmpty(especialidades))
+            if (especialidades != 0)
             {
-                turnos = turnos.Where(e => e.Medico.EspecialidadId == Int32.Parse(especialidades)).ToList();
+                turnos = turnos.Where(e => e.Medico.EspecialidadId == especialidades).ToList();
             }
 
             return View("Index", turnos);
