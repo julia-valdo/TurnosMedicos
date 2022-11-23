@@ -33,14 +33,14 @@ namespace TurnosMedicos.Controllers
                 identity.AddClaim(new Claim(ClaimTypes.Email, usuario.Email));
                 identity.AddClaim(new Claim(ClaimTypes.Role, usuario.Rol));
                 identity.AddClaim(new Claim("Password", usuario.Password));
-                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.UsuarioId.ToString()));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.UsuarioId.ToString())); 
 
                 ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 
                 HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
                 return RedirectToAction("Index", "Home");
             }
-            ViewBag.Mensaje = "La contraseña no es válida.";
+            ViewBag.Mensaje = "Usuario incorrecto..";
             return View();
         }
 
