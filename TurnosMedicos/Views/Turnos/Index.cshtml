@@ -11,10 +11,10 @@
     @using (Html.BeginForm("Index", "Turnos", FormMethod.Post))
     {
         @Html.DropDownList("especialidades", ViewBag.EspecialidadId as IEnumerable<SelectListItem>, new { @class = "form-control" })
-        <input type="submit" class="btn btn-primary" value="Buscar" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
     }
 </div><br/>
-@if (User.IsInRole("Administrador")) 
+@if (User.IsInRole("Administrador") || User.IsInRole("Supervisor"))
 {
     <div>
         <a asp-action="Create" class="btn btn-outline-dark">Agregar Turno</a>
@@ -29,6 +29,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Medico)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Medico.Especialidad)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -41,11 +44,17 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Medico.Nombre)
             </td>
-            @if (User.IsInRole("Administrador")){
+            <td>
+                    @Html.DisplayFor(modelItem => item.Medico.Especialidad.Nombre)
+            </td>
+            @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor")){
                 <td>                    
                     <a asp-action="Edit" asp-route-id="@item.TurnoId">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.TurnoId">Detalle</a> |
-                    <a asp-action="Delete" asp-route-id="@item.TurnoId">Eliminar</a>                                            
+                    <a asp-action="Delete" asp-route-id="@item.TurnoId">Eliminar</a>            
+                    @if(item.UsuarioId != null){
+                            <span class="badge bg-secondary">RESERVADO</span>
+                    }
                 </td>
             }
             @if (User.IsInRole("Paciente")){

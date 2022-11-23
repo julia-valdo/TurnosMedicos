@@ -40,7 +40,8 @@ namespace TurnosMedicos.Controllers
                 HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
                 return RedirectToAction("Index", "Home");
             }
-            else return View();
+            ViewBag.Mensaje = "La contraseña no es válida.";
+            return View();
         }
 
         public async Task<IActionResult> Salir()
@@ -56,11 +57,13 @@ namespace TurnosMedicos.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UsuarioId,Nombre,Email,Password")] Usuario usuario)
+        public async Task<IActionResult> Create([Bind("UsuarioId,Nombre,Email,Password,Rol")] Usuario usuario)
         {
+            if (_context.Usuario.Any(u => u.Email == usuario.Email))
+                ModelState.AddModelError("Email", "Ya existe un usuario registrado con ese Email");
+
             if (ModelState.IsValid)
             {
-                usuario.Rol = "Paciente";
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -23,6 +23,7 @@
                     <label for="exampleInputPassword1">Contraseña</label>
                     <input type="password" class="form-control" asp-for="Password">
                 </div>
+                <p class="text-danger">@ViewBag.Mensaje</p>
                 <button type="submit" class="btn btn-primary">Ingresar</button>
                 <br /><br />
                 <a asp-action="Create">Registrarse</a>

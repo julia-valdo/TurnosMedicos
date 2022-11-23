@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using TurnosMedicos.Models;
 
@@ -15,6 +16,8 @@ namespace TurnosMedicos.Controllers
 
         public IActionResult Index()
         {
+            var usuario = User.FindFirstValue(ClaimTypes.Name);
+            ViewBag.Usuario = usuario;
             return View();
         }
 

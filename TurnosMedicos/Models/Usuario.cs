@@ -22,6 +22,8 @@ namespace TurnosMedicos.Models
         [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
+        [Required(ErrorMessage = ErrorViewModel.CampoRequerido)]
+        [MaxLength(50, ErrorMessage = ErrorViewModel.CaracteresMaximos)]
         public string Rol { get; set; } = "";
 
         public ICollection<Turno>? Turnos { get; set; }

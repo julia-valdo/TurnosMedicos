@@ -23,7 +23,6 @@ namespace TurnosMedicos.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Administrador, Paciente")]
         public async Task<IActionResult> Index()
         {
             ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
@@ -46,6 +45,7 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
+        [Authorize(Roles = "Administrador, Supervisor")]
         public IActionResult Create()
         {
             ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
@@ -65,6 +65,7 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
+        [Authorize(Roles = "Administrador, Supervisor")]
         public async Task<IActionResult> Edit(int? id)
         {
             ViewData["MedicoId"] = new SelectList(_context.Medico, "MedicoId", "Nombre");
@@ -113,6 +114,7 @@ namespace TurnosMedicos.Controllers
             return View(turno);
         }
 
+        [Authorize(Roles = "Administrador, Supervisor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Turno == null)
@@ -238,7 +240,6 @@ namespace TurnosMedicos.Controllers
             var turnos = await _context.Turno.Include(m => m.Medico).ToListAsync();
             turnos = turnos.Where(t => t.UsuarioId == usuarioId).ToList();
 
-            ViewData["EspecialidadId"] = new SelectList(_context.Especialidad, "EspecialidadId", "Nombre");
             return View(turnos);
         }
     }

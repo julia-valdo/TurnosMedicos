@@ -53,6 +53,9 @@ namespace TurnosMedicos.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MedicoId,Matricula,Nombre,EspecialidadId")] Medico medico)
         {
+            if(_context.Medico.Any(m => m.Matricula == medico.Matricula))
+                ModelState.AddModelError("Matricula", "Ya existe un medico con esa matricula");
+
             if (ModelState.IsValid)
             {
                 _context.Add(medico);
@@ -87,6 +90,9 @@ namespace TurnosMedicos.Controllers
             {
                 return NotFound();
             }
+
+            if (_context.Medico.Any(m => m.Matricula == medico.Matricula))
+                ModelState.AddModelError("Matricula", "Ya existe un medico con esa matricula");
 
             if (ModelState.IsValid)
             {

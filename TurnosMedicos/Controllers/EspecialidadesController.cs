@@ -52,6 +52,9 @@ namespace TurnosMedicos.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EspecialidadId,Nombre")] Especialidad especialidad)
         {
+            if (_context.Especialidad.Any(e => e.Nombre == especialidad.Nombre))
+                ModelState.AddModelError("Nombre", "Ya existe una especialidad con ese nombre");
+
             if (ModelState.IsValid)
             {
                 _context.Add(especialidad);
@@ -80,6 +83,9 @@ namespace TurnosMedicos.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EspecialidadId,Nombre")] Especialidad especialidad)
         {
+            if (_context.Especialidad.Any(e => e.Nombre == especialidad.Nombre))
+                ModelState.AddModelError("Nombre", "Ya existe una especialidad con ese nombre");
+
             if (id != especialidad.EspecialidadId)
             {
                 return NotFound();
